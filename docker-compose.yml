@@ -1,0 +1,11 @@
+name: 'url-shortener'
+
+services:
+  db:
+    image: postgres:16-bookworm
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: url-shortener
+      POSTGRES_PASSWORD: url-shortener@123
