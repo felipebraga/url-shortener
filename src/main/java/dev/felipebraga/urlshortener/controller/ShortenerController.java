@@ -4,10 +4,12 @@ import dev.felipebraga.urlshortener.controller.request.UrlRequest;
 import dev.felipebraga.urlshortener.controller.response.UrlCreatedResponse;
 import dev.felipebraga.urlshortener.model.ShortCode;
 import dev.felipebraga.urlshortener.model.Url;
+import dev.felipebraga.urlshortener.model.User;
 import dev.felipebraga.urlshortener.repository.UrlRepository;
 import dev.felipebraga.urlshortener.service.ShortCodeService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -27,6 +29,7 @@ public class ShortenerController {
 
     @PostMapping({"/shortener", "/reducto"})
     public ResponseEntity<UrlCreatedResponse> shortener(@RequestBody @Valid UrlRequest urlRequest,
+                                                        @AuthenticationPrincipal User user,
                                                         UriComponentsBuilder uriBuilder) {
         final ShortCode shortCode = shortCodeService.nextShortCode();
         final URI shortenedUri = uriBuilder.path("{shortCode}").buildAndExpand(shortCode).toUri();
@@ -34,11 +37,12 @@ public class ShortenerController {
         final Url url = Url.builder(shortCode, urlRequest.url())
                 .expiresIn(urlRequest.expiresIn())
                 .shortenedUrl(shortenedUri.toString())
-                .user(null)
+                .user(user)
                 .build();
 
         urlRepository.save(url);
 
         return ResponseEntity.created(shortenedUri).body(UrlCreatedResponse.wrap(url));
     }
+
 }

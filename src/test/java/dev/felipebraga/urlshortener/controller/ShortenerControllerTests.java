@@ -12,11 +12,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.sqids.Sqids;
 
@@ -29,7 +31,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(value = ShortenerController.class)
+@WebMvcTest(value = ShortenerController.class,
+    excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @Import(SqidsConfiguration.class)
 class ShortenerControllerTests {
 
@@ -91,6 +94,7 @@ class ShortenerControllerTests {
                 .andExpect(status().isBadRequest());
     }
 
+    @WithMockUser
     @ParameterizedTest
     @MethodSource("validUrlNoExpires")
     void whenLoggedValidUrlThenReturn201(UrlRequest urlRequest, Long index) throws Exception {
@@ -101,6 +105,7 @@ class ShortenerControllerTests {
             .andExpect(header().exists("location"));
     }
 
+    @WithMockUser
     @ParameterizedTest
     @MethodSource("validUrlWithExpires")
     void whenLoggedValidUrlWithExpiresThenReturn201(UrlRequest urlRequest, Long index) throws Exception {
@@ -111,6 +116,7 @@ class ShortenerControllerTests {
             .andExpect(header().exists("location"));
     }
 
+    @WithMockUser
     @ParameterizedTest
     @MethodSource("validUrlWithPastExpires")
     void whenLoggedValidUrlPastExpiresThenReturn400(UrlRequest urlRequest, Long index) throws Exception {

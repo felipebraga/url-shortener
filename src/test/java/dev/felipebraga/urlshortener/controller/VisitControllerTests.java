@@ -11,6 +11,7 @@ import dev.felipebraga.urlshortener.service.ShortCodeService;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -28,7 +29,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(value = VisitController.class)
+@WebMvcTest(value = VisitController.class,
+    excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @Import(SqidsConfiguration.class)
 class VisitControllerTests {
 
