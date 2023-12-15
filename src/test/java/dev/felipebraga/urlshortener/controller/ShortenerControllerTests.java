@@ -3,7 +3,6 @@ package dev.felipebraga.urlshortener.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.felipebraga.urlshortener.config.SqidsConfiguration;
 import dev.felipebraga.urlshortener.controller.request.UrlRequest;
-import dev.felipebraga.urlshortener.model.ShortCode;
 import dev.felipebraga.urlshortener.repository.ShortCodeRepositoryImpl;
 import dev.felipebraga.urlshortener.repository.UrlRepository;
 import dev.felipebraga.urlshortener.service.ShortCodeService;
@@ -23,13 +22,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.sqids.Sqids;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = ShortenerController.class,
     excludeAutoConfiguration = SecurityAutoConfiguration.class)
@@ -94,7 +93,7 @@ class ShortenerControllerTests {
                 .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser
+    @WithMockUser(username = "felipeab", password = "pass-felipe")
     @ParameterizedTest
     @MethodSource("validUrlNoExpires")
     void whenLoggedValidUrlThenReturn201(UrlRequest urlRequest, Long index) throws Exception {
@@ -105,7 +104,7 @@ class ShortenerControllerTests {
             .andExpect(header().exists("location"));
     }
 
-    @WithMockUser
+    @WithMockUser(username = "felipeab", password = "pass-felipe")
     @ParameterizedTest
     @MethodSource("validUrlWithExpires")
     void whenLoggedValidUrlWithExpiresThenReturn201(UrlRequest urlRequest, Long index) throws Exception {
@@ -116,7 +115,7 @@ class ShortenerControllerTests {
             .andExpect(header().exists("location"));
     }
 
-    @WithMockUser
+    @WithMockUser(username = "felipeab", password = "pass-felipe")
     @ParameterizedTest
     @MethodSource("validUrlWithPastExpires")
     void whenLoggedValidUrlPastExpiresThenReturn400(UrlRequest urlRequest, Long index) throws Exception {

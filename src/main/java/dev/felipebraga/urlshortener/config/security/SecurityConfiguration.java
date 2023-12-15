@@ -36,7 +36,7 @@ public class SecurityConfiguration {
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.inMemory(1L, "user", passwordEncoder.encode("password"));
+        UserDetails user = User.inMemory(1L, "felipeab", passwordEncoder.encode("pass-felipe"));
         return new InMemoryCustomUserDetailsManager(user);
     }
 
