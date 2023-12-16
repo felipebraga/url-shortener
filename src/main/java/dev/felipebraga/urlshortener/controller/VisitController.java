@@ -54,7 +54,7 @@ public class VisitController {
 
         return ResponseEntity
                 .status(HttpStatus.TEMPORARY_REDIRECT)
-                .location(URI.create(url.getOriginalUrl()))
+                .location(URI.create(url.getSourceUrl()))
                 .cacheControl(CacheControl.maxAge(properties.getVisitedCache()).cachePrivate())
                 .build();
     }

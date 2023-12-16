@@ -35,7 +35,7 @@ public class Url implements Persistable<Long>, Serializable {
     private String shortenedUrl;
 
     @Column(nullable = false, columnDefinition = "text")
-    private String originalUrl;
+    private String sourceUrl;
 
     @Column
     private LocalDateTime expiresIn;
@@ -62,7 +62,7 @@ public class Url implements Persistable<Long>, Serializable {
     private Url(Builder builder) {
         this.id = builder.shortCode.getSeq();
         this.shortCode = builder.shortCode;
-        this.originalUrl = builder.originalUrl;
+        this.sourceUrl = builder.sourceUrl;
         this.shortenedUrl = builder.shortenedUrl;
         this.expiresIn = builder.expiresIn;
         this.user = builder.user;
@@ -88,12 +88,12 @@ public class Url implements Persistable<Long>, Serializable {
         this.shortenedUrl = shortenedUrl;
     }
 
-    public String getOriginalUrl() {
-        return originalUrl;
+    public String getSourceUrl() {
+        return sourceUrl;
     }
 
-    public void setOriginalUrl(String originalUrl) {
-        this.originalUrl = originalUrl;
+    public void setSourceUrl(String originalUrl) {
+        this.sourceUrl = originalUrl;
     }
 
     public LocalDateTime getExpiresIn() {
@@ -160,23 +160,22 @@ public class Url implements Persistable<Long>, Serializable {
         return Objects.hash(id, shortCode);
     }
 
-    public static Builder builder(ShortCode shortCode, String originalUrl) {
+    public static Builder builder(ShortCode shortCode, String sourceUrl) {
         Objects.requireNonNull(shortCode);
-        Objects.requireNonNull(originalUrl);
-        return new Builder(shortCode, originalUrl);
+        Objects.requireNonNull(sourceUrl);
+        return new Builder(shortCode, sourceUrl);
     }
 
     public static final class Builder {
         private final ShortCode shortCode;
-        private final String originalUrl;
+        private final String sourceUrl;
         private String shortenedUrl;
         private LocalDateTime expiresIn;
-        private Boolean active;
         private User user;
 
-        private Builder(ShortCode shortCode, String originalUrl) {
+        private Builder(ShortCode shortCode, String sourceUrl) {
             this.shortCode = shortCode;
-            this.originalUrl = originalUrl;
+            this.sourceUrl = sourceUrl;
         }
 
         public Builder shortenedUrl(String shortenedUrl) {

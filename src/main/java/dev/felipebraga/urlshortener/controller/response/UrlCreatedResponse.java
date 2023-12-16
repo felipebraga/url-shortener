@@ -4,8 +4,8 @@ import dev.felipebraga.urlshortener.model.Url;
 
 import java.time.LocalDateTime;
 
-public record UrlCreatedResponse(String urlShortened, String originalUrl, LocalDateTime expiresIn) {
+public record UrlCreatedResponse(String shortenedUrl, String sourceUrl, LocalDateTime expiresIn) {
     public static UrlCreatedResponse wrap(Url url) {
-        return new UrlCreatedResponse(url.getShortenedUrl(), url.getOriginalUrl(), url.getExpiresIn());
+        return new UrlCreatedResponse(url.getShortenedUrl(), url.getSourceUrl(), url.getExpiresIn());
     }
 }
