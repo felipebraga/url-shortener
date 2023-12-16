@@ -9,16 +9,16 @@ public final class ShortCode implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 0L;
-    private final Long id;
+    private final Long seq;
     private final String value;
 
-    public ShortCode(Long id, String value) {
-        this.id = id;
+    public ShortCode(Long seq, String value) {
+        this.seq = seq;
         this.value = value;
     }
 
-    public Long getId() {
-        return id;
+    public Long getSeq() {
+        return seq;
     }
 
     public String getValue() {
@@ -26,7 +26,7 @@ public final class ShortCode implements Serializable {
     }
 
     public <X extends Throwable> ShortCode isUnknownThenThrows(Supplier<? extends X> exceptionSupplier) throws X {
-       if (id == null || value == null) {
+       if (seq == null || value == null) {
            throw exceptionSupplier.get();
        }
        return this;
@@ -37,13 +37,13 @@ public final class ShortCode implements Serializable {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
         var that = (ShortCode) obj;
-        return Objects.equals(this.id, that.id) &&
+        return Objects.equals(this.seq, that.seq) &&
                 Objects.equals(this.value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, value);
+        return Objects.hash(seq, value);
     }
 
     @Override

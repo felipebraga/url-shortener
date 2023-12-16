@@ -18,7 +18,7 @@ public class ShortCodeType implements CompositeUserType<ShortCode> {
     @Override
     public Object getPropertyValue(ShortCode component, int property) throws HibernateException {
         return switch (property) {
-            case 0 -> component.getId();
+            case 0 -> component.getSeq();
             case 1 -> component.getValue();
             default -> throw new IllegalArgumentException(property +
                     " is an invalid property index for class type " + component.getClass().getName());

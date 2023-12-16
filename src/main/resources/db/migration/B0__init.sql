@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto SCHEMA "public";
 
-CREATE SEQUENCE IF NOT EXISTS public.short_code_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE IF NOT EXISTS public.short_code_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1000 NO CYCLE;
 
 CREATE TABLE public.users
 (
@@ -25,10 +25,11 @@ CREATE TABLE public.url
     shortened_url  text         NULL,
     original_url   text         NOT NULL,
     expires_in     timestamp(6) NULL,
-    created_at     timestamp(6) NOT NULL,
+    created_at     timestamp(6) NOT NULL DEFAULT now(),
     active         boolean      NOT NULL DEFAULT TRUE,
     user_id        bigint       NULL,
     CONSTRAINT url_pkey PRIMARY KEY (id),
+    CONSTRAINT url_id_short_code_key UNIQUE (id, short_code),
     CONSTRAINT url_short_code_key UNIQUE (short_code),
     CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES public.users(id)
 );
