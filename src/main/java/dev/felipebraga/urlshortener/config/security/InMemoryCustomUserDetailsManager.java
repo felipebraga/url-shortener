@@ -1,8 +1,6 @@
 package dev.felipebraga.urlshortener.config.security;
 
 import dev.felipebraga.urlshortener.model.User;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,8 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InMemoryCustomUserDetailsManager extends InMemoryUserDetailsManager {
-
-    protected final Log logger = LogFactory.getLog(getClass());
 
     private final Map<String, User> customUsers = new HashMap<>();
 
