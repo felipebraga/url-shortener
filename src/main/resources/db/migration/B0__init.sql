@@ -15,6 +15,7 @@ CREATE TABLE public.users
     created_at    timestamp(6)  NOT NULL DEFAULT now(),
     CONSTRAINT users_email_key UNIQUE (email),
     CONSTRAINT users_pkey PRIMARY KEY (id),
+    CONSTRAINT users_public_id_key UNIQUE (public_id),
     CONSTRAINT users_username_key UNIQUE (username)
 );
 

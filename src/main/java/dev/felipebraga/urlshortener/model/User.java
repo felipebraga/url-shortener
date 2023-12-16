@@ -2,6 +2,7 @@ package dev.felipebraga.urlshortener.model;
 
 import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.NaturalId;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NaturalId
     @Column(nullable = false, insertable = false, columnDefinition = "uuid default gen_random_uuid()")
     private UUID publicId;
 
@@ -38,7 +40,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private Set<Url> urls;
 
-    @Column(nullable = false, columnDefinition = "timestamp(6) default now()")
+    @Column(nullable = false, columnDefinition = "timestamp(6) default now()", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
     public User() {
