@@ -1,8 +1,9 @@
-from contextlib import contextmanager
+# from contextlib import contextmanager
 from locust import task, run_single_user, FastHttpUser, between
-from locust.contrib.fasthttp import RestResponseContextManager
-from locust.user.wait_time import constant
-from typing import Generator
+from json import JSONDecodeError
+# from locust.contrib.fasthttp import RestResponseContextManager
+# from locust.user.wait_time import constant
+# from typing import Generator
 from faker import Faker
 fake = Faker()
 
@@ -18,7 +19,9 @@ class MyUser(FastHttpUser):
 
         # should work
         with self.rest("POST", "/api/shortener", json={"url": fake.url()}) as resp:
-            print(resp)
+            if resp.status_code == 201:
+                resp.success()
+#                 response.success()
 #             if resp.js["urlShortened"]:
 #                 resp.failure(f"Unexpected value of foo in response {resp.text}")
             # assertions are a nice short way to express your expectations about the response. The AssertionError thrown will be caught
@@ -28,8 +31,8 @@ class MyUser(FastHttpUser):
         # assertions are a nice short way to validate the response. The AssertionError they raise
         # will be caught by rest() and mark the request as failed
 
-        with self.rest("POST", "/api/reducto", json={"url": fake.url()}) as resp:
-            print(resp)
+#         with self.rest("POST", "/api/reducto", json={"url": fake.url()}) as resp:
+#             assert true
 
 #         with self.rest("POST", "/post", json={"foo": 1}) as resp:
 #             # mark the request as failed with the message "Assertion failed"
@@ -99,5 +102,5 @@ class MyUser(FastHttpUser):
 #             pass
 
 
-# if __name__ == "__main__":
-#     run_single_user(MyUser)
+if __name__ == "__main__":
+    run_single_user(MyUser)
