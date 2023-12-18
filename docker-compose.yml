@@ -1,11 +1,30 @@
+version: '3.9'
 name: 'url-shortener'
 
 services:
-  db:
+  postgresql:
     image: postgres:16-bookworm
+    hostname: postgres
     restart: always
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       POSTGRES_USER: url-shortener
       POSTGRES_PASSWORD: url-shortener@123
+
+  url-shortener-api:
+    image: felipebraga/url-shortener:latest
+    build:
+      context: .
+      args:
+        - BUILDPLATFORM=arm64
+      dockerfile: Dockerfile
+    hostname: url-shortener-api
+    profiles:
+      - local-dev
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: postgres
+    depends_on:
+      - postgresql
