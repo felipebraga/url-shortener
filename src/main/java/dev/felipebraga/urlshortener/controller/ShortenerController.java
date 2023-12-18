@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class ShortenerController {
         this.urlRepository = urlRepository;
     }
 
-    @PostMapping({"/shortener", "/reducto"})
+    @PostMapping(value = {"/shortener", "/reducto"}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<UrlCreatedResponse> shortener(@RequestBody @Valid UrlRequest urlRequest,
                                                         @AuthenticationPrincipal User user,
                                                         UriComponentsBuilder uriBuilder) {
@@ -55,7 +56,7 @@ public class ShortenerController {
 
     @GetMapping("/shortener/{uniqueId}")
     public ResponseEntity<UrlResponse> getShortened(@PathVariable String uniqueId,
-                                      @AuthenticationPrincipal User user) {
+                                                    @AuthenticationPrincipal User user) {
         final ShortCode shortCode = shortCodeService.decode(uniqueId);
         final Url url = urlRepository.findByIdAndUser(shortCode.getSeq(), user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -65,10 +66,10 @@ public class ShortenerController {
 
     @DeleteMapping("/shortener/{uniqueId}")
     public ResponseEntity<UrlResponse> deleteShortened(@PathVariable String uniqueId,
-                                              @AuthenticationPrincipal User user) {
+                                                       @AuthenticationPrincipal User user) {
         final ShortCode shortCode = shortCodeService.decode(uniqueId);
         final Url url = urlRepository.findByIdAndUser(shortCode.getSeq(), user)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         url.deactivate();
         urlRepository.save(url);
