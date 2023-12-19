@@ -11,16 +11,83 @@ A simple URL Shortener Service
 ### Prerequisites
 
 - [JDK 21](https://openjdk.org/projects/jdk/21/)
-- [SDKMAN!](https://sdkman.io/)
-- [Maven](https://maven.apache.org/)
 - [Docker](https://www.docker.com/products/docker-desktop/)
+- [Maven](https://maven.apache.org/) (Optional)
+- [SDKMAN!](https://sdkman.io/) (Optional)
 
-### Usage
-
-At the root directory run:
+### Run locally
 
 ```
-docker compose up
+ ./mvnw clean package
+ 
+ docker compose up -d
+ 
+ ./mvnw spring-boot:run
 ```
 
-The database is running.
+Or run it using Docker
+
+```
+docker compose --profile local-dev up -d
+```
+
+If you are running in a Intel x64
+```
+docker compose build --build-arg BUILDPLATFORM=linux/amd64 url-shortener-api
+docker compose --profile local-dev up -d
+```
+
+
+## API Description
+
+All URIs are relative to *http://localhost:8080*
+
+> [!NOTE]
+> It's possible to have control doing an HTTP basic authentication **felipeab:pass-felipe**
+
+> **POST** /api/shortener
+- **Authorization**: Basic
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+#### Request | [UrlRequest](src/main/java/dev/felipebraga/urlshortener/controller/request/UrlRequest.java)
+```json
+{
+  "url": "http://example.com",
+  "expiresIn": "2023-12-18T19:21:00" // Optional
+}
+```
+
+Only authenticated users can set an expire date.
+Even in the case that `expiresIn` is pass to the request, the Shortener will ignore the value and use a default of +6h from now.
+
+#### Response | [UrlCreateResponse](src/main/java/dev/felipebraga/urlshortener/controller/response/UrlCreatedResponse.java)
+```json
+{
+  "shortenedUrl": "http://localhost:8080/RtD0to",
+  "sourceUrl": "http://example.com",
+  "expiresIn": "2023-12-18T19:21:00"
+}
+```
+
+> **GET** /api/shortener/{uniqueId}
+
+- **Authorization**: Basic
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+#### Response | [UrlResponse](src/main/java/dev/felipebraga/urlshortener/controller/response/UrlResponse.java)
+```json
+{
+  "shortCode": "RtD0to",
+  "shortenedUrl": "http://localhost:8080/RtD0to",
+  "sourceUrl": "http://example.com",
+  "expiresIn": "2023-12-18T19:21:00",
+  "createdAt": "2023-12-18T18:21:00"
+}
+```
+
+> **DELETE** /api/shortener/{uniqueId}
+
+---
+> **GET** /{uniqueId}
