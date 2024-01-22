@@ -20,7 +20,7 @@ public class DeleteExpiredTask {
         this.urlRepository = urlRepository;
     }
 
-    @Scheduled(fixedDelay = 30, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelay = 30, timeUnit = TimeUnit.MINUTES, cron = Scheduled.CRON_DISABLED)
     public void deleteExpires() {
         logger.info("");
         urlRepository.deleteByExpiresInIsLessThan(LocalDateTime.now());
