@@ -64,7 +64,7 @@ class VisitControllerTests {
         ShortCode shortCode = new ShortCode(null, uniqueId);
         Url url = Url.builder(shortCode, "http://example.com").build();
 
-        when(urlRepository.findByShortCodeAndExpiresInIsGreaterThanEqualAndActiveTrue(
+        when(urlRepository.findNotExpiredByShortCode(
                 any(ShortCode.class), any(LocalDateTime.class))
         ).thenReturn(Optional.of(url));
 
@@ -76,7 +76,7 @@ class VisitControllerTests {
     @ParameterizedTest
     @MethodSource("validUniqueId")
     void whenVisitingValidUniqueIdAndItDoesntExistsThen404(String uniqueId) throws Exception {
-        when(urlRepository.findByShortCodeAndExpiresInIsGreaterThanEqualAndActiveTrue(
+        when(urlRepository.findNotExpiredByShortCode(
                 any(ShortCode.class), any(LocalDateTime.class))
         ).thenReturn(Optional.empty());
 

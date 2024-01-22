@@ -14,9 +14,6 @@ public class InMemoryCustomUserDetailsManager extends InMemoryUserDetailsManager
 
     private final Map<String, User> customUsers = new HashMap<>();
 
-    private SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder
-        .getContextHolderStrategy();
-
     public InMemoryCustomUserDetailsManager() {
     }
 

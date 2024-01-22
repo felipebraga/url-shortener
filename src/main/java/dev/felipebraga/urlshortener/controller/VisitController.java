@@ -45,7 +45,7 @@ public class VisitController {
         ShortCode shortCode = shortCodeService.decode(uniqueId)
                 .isUnknownThenThrows(() -> notFoundException);
 
-        Url url = urlRepo.findByShortCodeAndExpiresInIsGreaterThanEqualAndActiveTrue(shortCode, LocalDateTime.now())
+        Url url = urlRepo.findNotExpiredByShortCode(shortCode, LocalDateTime.now())
                 .orElseThrow(() -> notFoundException);
 
         Activity activity = new Activity(url, headers.toSingleValueMap());

@@ -3,6 +3,7 @@ package dev.felipebraga.urlshortener.config.security;
 import dev.felipebraga.urlshortener.model.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -27,7 +28,7 @@ public class SecurityConfiguration {
             .csrf(AbstractHttpConfigurer::disable)
             .securityMatcher("/api/**")
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(HttpMethod.POST, "/api/shortener", "/api/reducto").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/reducto").permitAll()
                 .requestMatchers("/api/shortener/**").authenticated()
             )
             .httpBasic(Customizer.withDefaults())
@@ -38,7 +39,8 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
+    @Profile("test")
+    public InMemoryUserDetailsManager memoryUserDetailsService(PasswordEncoder passwordEncoder) {
         UserDetails user = User.inMemory(1L, "felipeab", passwordEncoder.encode("pass-felipe"));
         return new InMemoryCustomUserDetailsManager(user);
     }

@@ -1,5 +1,6 @@
 package dev.felipebraga.urlshortener.controller;
 
+import dev.felipebraga.urlshortener.Validation;
 import dev.felipebraga.urlshortener.controller.request.UrlRequest;
 import dev.felipebraga.urlshortener.controller.response.UrlCreatedResponse;
 import dev.felipebraga.urlshortener.controller.response.UrlResponse;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,7 +28,7 @@ import java.net.URI;
 @RequestMapping("/api")
 public class ShortenerController {
 
-    protected final Log logger = LogFactory.getLog(getClass());
+    private final Log logger = LogFactory.getLog(getClass());
 
     private final ShortCodeService shortCodeService;
     private final UrlRepository urlRepository;
@@ -36,10 +38,23 @@ public class ShortenerController {
         this.urlRepository = urlRepository;
     }
 
-    @PostMapping(value = {"/shortener", "/reducto"}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<UrlCreatedResponse> shortener(@RequestBody @Valid UrlRequest urlRequest,
+    @PostMapping(value = "/shortener", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<UrlCreatedResponse> shortener(@RequestBody @Validated(Validation.class) UrlRequest urlRequest,
                                                         @AuthenticationPrincipal User user,
                                                         UriComponentsBuilder uriBuilder) {
+        return shortenerOrReducto(urlRequest, user, uriBuilder);
+    }
+
+    @PostMapping(value = "/reducto", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<UrlCreatedResponse> reducto(@RequestBody @Valid UrlRequest urlRequest,
+                                                        @AuthenticationPrincipal User user,
+                                                        UriComponentsBuilder uriBuilder) {
+        return shortenerOrReducto(urlRequest, user, uriBuilder);
+    }
+
+    private ResponseEntity<UrlCreatedResponse> shortenerOrReducto(UrlRequest urlRequest,
+                                                                  User user,
+                                                                  UriComponentsBuilder uriBuilder) {
         final ShortCode shortCode = shortCodeService.nextShortCode();
         final URI shortenedUri = uriBuilder.path("{shortCode}").buildAndExpand(shortCode).toUri();
 

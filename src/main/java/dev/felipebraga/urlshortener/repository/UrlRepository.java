@@ -3,6 +3,7 @@ package dev.felipebraga.urlshortener.repository;
 import dev.felipebraga.urlshortener.model.ShortCode;
 import dev.felipebraga.urlshortener.model.Url;
 import dev.felipebraga.urlshortener.model.User;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +15,8 @@ public interface UrlRepository extends CrudRepository<Url, Long> {
 
     Optional<Url> findByIdAndUser(Long id, User user);
 
-    Optional<Url> findByIdAndExpiresInIsGreaterThanEqualAndActiveTrue(Long id, LocalDateTime today);
+    @Query("select url from Url url where url.shortCode = ?1 and (url.expiresIn is null or url.expiresIn >= ?2)")
+    Optional<Url> findNotExpiredByShortCode(ShortCode shortCode, LocalDateTime today);
 
     Optional<Url> findByShortCodeAndExpiresInIsGreaterThanEqualAndActiveTrue(ShortCode shortCode, LocalDateTime today);
 
