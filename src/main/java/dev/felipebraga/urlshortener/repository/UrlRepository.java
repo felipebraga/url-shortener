@@ -18,6 +18,5 @@ public interface UrlRepository extends CrudRepository<Url, Long> {
     @Query("select url from Url url where url.shortCode = ?1 and (url.expiresIn is null or url.expiresIn >= ?2)")
     Optional<Url> findNotExpiredByShortCode(ShortCode shortCode, LocalDateTime today);
 
-    Optional<Url> findByShortCodeAndExpiresInIsGreaterThanEqualAndActiveTrue(ShortCode shortCode, LocalDateTime today);
-
+    void deleteByExpiresInIsLessThan(LocalDateTime now);
 }
