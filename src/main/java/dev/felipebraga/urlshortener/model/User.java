@@ -3,6 +3,7 @@ package dev.felipebraga.urlshortener.model;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.NaturalId;
+import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +13,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
+public class User implements UserDetails, CredentialsContainer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,6 +45,12 @@ public class User implements UserDetails {
     private LocalDateTime createdAt;
 
     public User() {
+    }
+
+    public User(Long id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
     }
 
     public Long getId() {
@@ -143,6 +150,11 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public void eraseCredentials() {
+        this.password = null;
     }
 
     public boolean hasCustomDomain() {

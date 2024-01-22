@@ -1,10 +1,12 @@
 package dev.felipebraga.urlshortener.config.security;
 
 import dev.felipebraga.urlshortener.model.User;
+import dev.felipebraga.urlshortener.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,10 +33,11 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.POST, "/api/reducto").permitAll()
                 .requestMatchers("/api/shortener/**").authenticated()
             )
-            .httpBasic(Customizer.withDefaults())
             .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            );
+                session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+            )
+            .httpBasic(Customizer.withDefaults())
+            .formLogin(AbstractHttpConfigurer::disable);
         return http.build();
     }
 
@@ -43,6 +46,20 @@ public class SecurityConfiguration {
     public InMemoryUserDetailsManager memoryUserDetailsService(PasswordEncoder passwordEncoder) {
         UserDetails user = User.inMemory(1L, "felipeab", passwordEncoder.encode("pass-felipe"));
         return new InMemoryCustomUserDetailsManager(user);
+    }
+
+    @Bean
+    @Profile("!test")
+    public CustomUserDetailsService customUserDetailsService(UserRepository userRepository) {
+        return new CustomUserDetailsService(userRepository);
+    }
+
+    @Bean
+    @Profile("!test")
+    public DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService customUserDetailsService, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(passwordEncoder);
+        provider.setUserDetailsService(customUserDetailsService);
+        return provider;
     }
 
     @Bean
