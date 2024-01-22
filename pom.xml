@@ -22,6 +22,8 @@
         <datafaker.version>2.0.2</datafaker.version>
         <sqids.version>0.1.0</sqids.version>
         <postgresql.version>42.7.1</postgresql.version>
+        <gatling-charts.version>3.10.3</gatling-charts.version>
+        <gatling-maven-plugin.version>4.7.0</gatling-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -107,6 +109,12 @@
             <version>${datafaker.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.gatling.highcharts</groupId>
+            <artifactId>gatling-charts-highcharts</artifactId>
+            <version>${gatling-charts.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -114,6 +122,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>io.gatling</groupId>
+                <artifactId>gatling-maven-plugin</artifactId>
+                <version>${gatling-maven-plugin.version}</version>
+                <configuration>
+                    <simulationClass>simulations.UrlShortenerSimulation</simulationClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>
