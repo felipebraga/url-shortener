@@ -43,9 +43,9 @@ docker compose --profile local-dev up -d
 All URIs are relative to *http://localhost:8080*
 
 > [!NOTE]
-> It's possible to have control doing an HTTP basic authentication **felipeab:pass-felipe**
+> It's possible to have control doing an HTTP basic authentication **flitwick:alohomora**
 
-> **POST** /api/shortener
+> **POST** /api/shorten
 - **Authorization**: Basic
 - **Content-Type**: application/json
 - **Accept**: application/json
@@ -70,7 +70,7 @@ Even in the case that `expiresIn` is pass to the request, the Shortener will ign
 }
 ```
 
-> **GET** /api/shortener/{uniqueId}
+> **GET** /api/shorten/{uniqueId}
 
 - **Authorization**: Basic
 - **Content-Type**: application/json
@@ -87,7 +87,13 @@ Even in the case that `expiresIn` is pass to the request, the Shortener will ign
 }
 ```
 
-> **DELETE** /api/shortener/{uniqueId}
+> **DELETE** /api/shorten/{uniqueId}
+- **Authorization**: Basic
+#### Response | 204 No Content
 
 ---
 > **GET** /{uniqueId}
+#### Response | 307
+
+## Things do improve or do
+

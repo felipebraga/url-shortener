@@ -78,7 +78,7 @@ class ShortenerControllerTests {
     void whenPublicValidUrlThenReturn201(UrlRequest urlRequest, Long index) throws Exception {
         when(shortCodeRepository.nextId()).thenReturn(index);
 
-        mockMvc.perform(post("/api/shortener")
+        mockMvc.perform(post("/api/shorten")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(urlRequest)))
                 .andExpect(status().isCreated());
@@ -87,39 +87,39 @@ class ShortenerControllerTests {
     @ParameterizedTest
     @MethodSource
     void whenPublicInvalidUrlThen400(String url) throws Exception {
-        mockMvc.perform(post("/api/reducto")
+        mockMvc.perform(post("/api/reducio")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new UrlRequest(url, null))))
                 .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser(username = "felipeab", password = "pass-felipe")
+    @WithMockUser(username = "flitwick", password = "alohomora")
     @ParameterizedTest
     @MethodSource("validUrlNoExpires")
     void whenLoggedValidUrlThenReturn201(UrlRequest urlRequest, Long index) throws Exception {
-        mockMvc.perform(post("/api/shortener")
+        mockMvc.perform(post("/api/shorten")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(urlRequest)))
             .andExpect(status().isCreated())
             .andExpect(header().exists("location"));
     }
 
-    @WithMockUser(username = "felipeab", password = "pass-felipe")
+    @WithMockUser(username = "flitwick", password = "alohomora")
     @ParameterizedTest
     @MethodSource("validUrlWithExpires")
     void whenLoggedValidUrlWithExpiresThenReturn201(UrlRequest urlRequest, Long index) throws Exception {
-        mockMvc.perform(post("/api/shortener")
+        mockMvc.perform(post("/api/shorten")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(urlRequest)))
             .andExpect(status().isCreated())
             .andExpect(header().exists("location"));
     }
 
-    @WithMockUser(username = "felipeab", password = "pass-felipe")
+    @WithMockUser(username = "flitwick", password = "alohomora")
     @ParameterizedTest
     @MethodSource("validUrlWithPastExpires")
     void whenLoggedValidUrlPastExpiresThenReturn400(UrlRequest urlRequest, Long index) throws Exception {
-        mockMvc.perform(post("/api/shortener")
+        mockMvc.perform(post("/api/shorten")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(urlRequest)))
             .andExpect(status().isBadRequest());

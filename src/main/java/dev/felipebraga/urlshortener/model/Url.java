@@ -9,6 +9,7 @@ import org.springframework.data.domain.Persistable;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
@@ -26,7 +27,7 @@ public class Url implements Persistable<Long>, Serializable {
     @NaturalId
     @AttributeOverrides({
         @AttributeOverride(name = "seq", column = @Column(name = "id", insertable = false, updatable = false)),
-        @AttributeOverride(name = "value", column = @Column(name = "short_code", length = 12, updatable = false))}
+        @AttributeOverride(name = "value", column = @Column(name = "short_code", length = 12, nullable = false, updatable = false))}
     )
     @CompositeType(ShortCodeType.class)
     private ShortCode shortCode;
@@ -137,8 +138,9 @@ public class Url implements Persistable<Long>, Serializable {
         return isNew;
     }
 
-    public void deactivate() {
+    public Url inactivate() {
         this.active = Boolean.FALSE;
+        return this;
     }
 
     @PrePersist
@@ -174,12 +176,15 @@ public class Url implements Persistable<Long>, Serializable {
         private User user;
 
         private Builder(ShortCode shortCode, String sourceUrl) {
+            Objects.requireNonNull(shortCode);
+            Objects.requireNonNull(sourceUrl);
             this.shortCode = shortCode;
             this.sourceUrl = sourceUrl;
         }
 
-        public Builder shortenedUrl(String shortenedUrl) {
-            this.shortenedUrl = shortenedUrl;
+        public Builder shortenedUrl(URI shortenedUrl) {
+            Objects.requireNonNull(shortenedUrl);
+            this.shortenedUrl = shortenedUrl.toString();
             return this;
         }
 

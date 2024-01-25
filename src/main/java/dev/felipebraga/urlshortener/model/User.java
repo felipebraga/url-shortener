@@ -1,7 +1,6 @@
 package dev.felipebraga.urlshortener.model;
 
 import jakarta.persistence.*;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.NaturalId;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,9 +33,6 @@ public class User implements UserDetails, CredentialsContainer {
 
     @Column(length = 80, nullable = false)
     private String password;
-
-    @Column(columnDefinition = "text")
-    private String customDomain;
 
     @OneToMany(mappedBy = "user")
     private Set<Url> urls;
@@ -103,14 +99,6 @@ public class User implements UserDetails, CredentialsContainer {
         this.password = password;
     }
 
-    public String getCustomDomain() {
-        return customDomain;
-    }
-
-    public void setCustomDomain(String customDomain) {
-        this.customDomain = customDomain;
-    }
-
     public Set<Url> getUrls() {
         return urls;
     }
@@ -155,10 +143,6 @@ public class User implements UserDetails, CredentialsContainer {
     @Override
     public void eraseCredentials() {
         this.password = null;
-    }
-
-    public boolean hasCustomDomain() {
-        return StringUtils.isNotBlank(this.customDomain);
     }
 
     public static User inMemory(Long id, String username, String password) {

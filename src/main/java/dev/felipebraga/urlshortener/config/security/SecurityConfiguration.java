@@ -30,8 +30,9 @@ public class SecurityConfiguration {
             .csrf(AbstractHttpConfigurer::disable)
             .securityMatcher("/api/**")
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(HttpMethod.POST, "/api/reducto").permitAll()
-                .requestMatchers("/api/shortener/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/reducio").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/reducio/**").permitAll()
+                .requestMatchers("/api/shorten/**", "/api/reducto/**").authenticated()
             )
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
@@ -44,7 +45,7 @@ public class SecurityConfiguration {
     @Bean
     @Profile("test")
     public InMemoryUserDetailsManager memoryUserDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.inMemory(1L, "felipeab", passwordEncoder.encode("pass-felipe"));
+        UserDetails user = User.inMemory(1L, "flitwick", passwordEncoder.encode("alohomora"));
         return new InMemoryCustomUserDetailsManager(user);
     }
 

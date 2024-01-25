@@ -38,38 +38,38 @@ public class ShortenerController {
         this.urlRepository = urlRepository;
     }
 
-    @PostMapping(value = "/shortener", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/shorten", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<UrlCreatedResponse> shortener(@RequestBody @Validated(Validation.class) UrlRequest urlRequest,
                                                         @AuthenticationPrincipal User user,
                                                         UriComponentsBuilder uriBuilder) {
-        return shortenerOrReducto(urlRequest, user, uriBuilder);
+        return executeShorten(urlRequest, user, uriBuilder);
     }
 
-    @PostMapping(value = "/reducto", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<UrlCreatedResponse> reducto(@RequestBody @Valid UrlRequest urlRequest,
-                                                        @AuthenticationPrincipal User user,
-                                                        UriComponentsBuilder uriBuilder) {
-        return shortenerOrReducto(urlRequest, user, uriBuilder);
+    @PostMapping(value = "/reducio", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<UrlCreatedResponse> reducio(@RequestBody @Valid UrlRequest urlRequest,
+                                                      @AuthenticationPrincipal User user,
+                                                      UriComponentsBuilder uriBuilder) {
+        return executeShorten(urlRequest, user, uriBuilder);
     }
 
-    private ResponseEntity<UrlCreatedResponse> shortenerOrReducto(UrlRequest urlRequest,
-                                                                  User user,
-                                                                  UriComponentsBuilder uriBuilder) {
+    private ResponseEntity<UrlCreatedResponse> executeShorten(UrlRequest urlRequest,
+                                                              User user,
+                                                              UriComponentsBuilder uriBuilder) {
         final ShortCode shortCode = shortCodeService.nextShortCode();
         final URI shortenedUri = uriBuilder.path("{shortCode}").buildAndExpand(shortCode).toUri();
 
         final Url url = Url.builder(shortCode, urlRequest.url())
                 .expiresIn(urlRequest.expiresIn())
-                .shortenedUrl(shortenedUri.toString())
+                .shortenedUrl(shortenedUri)
                 .user(user)
                 .build();
 
         urlRepository.save(url);
 
-        return ResponseEntity.created(getLocationUri(shortCode)).body(UrlCreatedResponse.wrap(url));
+        return ResponseEntity.created(getResourceLocation(shortCode, user)).body(UrlCreatedResponse.wrap(url));
     }
 
-    @GetMapping("/shortener/{uniqueId}")
+    @GetMapping({"/shorten/{uniqueId}", "/reducio/{uniqueId}"})
     public ResponseEntity<UrlResponse> getShortened(@PathVariable String uniqueId,
                                                     @AuthenticationPrincipal User user) {
         final ShortCode shortCode = shortCodeService.decode(uniqueId);
@@ -79,20 +79,26 @@ public class ShortenerController {
         return ResponseEntity.ok(UrlResponse.wrap(url));
     }
 
-    @DeleteMapping("/shortener/{uniqueId}")
-    public ResponseEntity<UrlResponse> deleteShortened(@PathVariable String uniqueId,
-                                                       @AuthenticationPrincipal User user) {
+    @DeleteMapping({"/shorten/{uniqueId}", "/reducto/{uniqueId}"})
+    public ResponseEntity<UrlResponse> delete(@PathVariable String uniqueId,
+                                              @AuthenticationPrincipal User user) {
         final ShortCode shortCode = shortCodeService.decode(uniqueId);
         final Url url = urlRepository.findByIdAndUser(shortCode.getSeq(), user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        url.deactivate();
-        urlRepository.save(url);
+        urlRepository.save(url.inactivate());
 
         return ResponseEntity.noContent().build();
     }
 
-    private URI getLocationUri(ShortCode shortCode) {
-        return ServletUriComponentsBuilder.fromCurrentRequest().path("/{shortCode}").buildAndExpand(shortCode).toUri();
+    private URI getResourceLocation(ShortCode shortCode, User user) {
+        UriComponentsBuilder currentUri = ServletUriComponentsBuilder.fromCurrentRequest();
+        if (user != null && currentUri.toUriString().contains("/reducio")) {
+            currentUri.replacePath("/api/shorten");
+        }
+
+        return currentUri
+                .pathSegment("{shortCode}")
+                .buildAndExpand(shortCode).toUri();
     }
 }
