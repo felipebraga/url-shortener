@@ -1,7 +1,7 @@
 package dev.felipebraga.urlshortener.service;
 
 import dev.felipebraga.urlshortener.model.ShortCode;
-import dev.felipebraga.urlshortener.repository.ShortCodeRepositoryImpl;
+import dev.felipebraga.urlshortener.repository.ShortCodeRepository;
 import org.springframework.stereotype.Service;
 import org.sqids.Sqids;
 
@@ -11,9 +11,9 @@ import java.util.List;
 public class ShortCodeService {
 
     private final Sqids sqids;
-    private final ShortCodeRepositoryImpl repository;
+    private final ShortCodeRepository repository;
 
-    public ShortCodeService(Sqids sqids, ShortCodeRepositoryImpl repository) {
+    public ShortCodeService(Sqids sqids, ShortCodeRepository repository) {
         this.sqids = sqids;
         this.repository = repository;
     }

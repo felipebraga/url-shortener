@@ -12,6 +12,7 @@ import dev.felipebraga.urlshortener.service.ShortCodeService;
 import jakarta.validation.Valid;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -66,7 +67,9 @@ public class ShortenerController {
 
         urlRepository.save(url);
 
-        return ResponseEntity.created(getResourceLocation(shortCode, user)).body(UrlCreatedResponse.wrap(url));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header(HttpHeaders.CONTENT_LOCATION, getResourceLocation(shortCode, user))
+                .body(UrlCreatedResponse.wrap(url));
     }
 
     @GetMapping({"/shorten/{uniqueId}", "/reducio/{uniqueId}"})
@@ -80,8 +83,8 @@ public class ShortenerController {
     }
 
     @DeleteMapping({"/shorten/{uniqueId}", "/reducto/{uniqueId}"})
-    public ResponseEntity<UrlResponse> delete(@PathVariable String uniqueId,
-                                              @AuthenticationPrincipal User user) {
+    public ResponseEntity<?> delete(@PathVariable String uniqueId,
+                                    @AuthenticationPrincipal User user) {
         final ShortCode shortCode = shortCodeService.decode(uniqueId);
         final Url url = urlRepository.findByIdAndUser(shortCode.getSeq(), user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -91,7 +94,7 @@ public class ShortenerController {
         return ResponseEntity.noContent().build();
     }
 
-    private URI getResourceLocation(ShortCode shortCode, User user) {
+    private String getResourceLocation(ShortCode shortCode, User user) {
         UriComponentsBuilder currentUri = ServletUriComponentsBuilder.fromCurrentRequest();
         if (user != null && currentUri.toUriString().contains("/reducio")) {
             currentUri.replacePath("/api/shorten");
@@ -99,6 +102,6 @@ public class ShortenerController {
 
         return currentUri
                 .pathSegment("{shortCode}")
-                .buildAndExpand(shortCode).toUri();
+                .buildAndExpand(shortCode).toUriString();
     }
 }

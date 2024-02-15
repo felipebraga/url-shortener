@@ -3,7 +3,7 @@ package dev.felipebraga.urlshortener.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.felipebraga.urlshortener.config.SqidsConfiguration;
 import dev.felipebraga.urlshortener.controller.request.UrlRequest;
-import dev.felipebraga.urlshortener.repository.ShortCodeRepositoryImpl;
+import dev.felipebraga.urlshortener.repository.ShortCodeRepository;
 import dev.felipebraga.urlshortener.repository.UrlRepository;
 import dev.felipebraga.urlshortener.service.ShortCodeService;
 import net.datafaker.Faker;
@@ -47,7 +47,7 @@ class ShortenerControllerTests {
     @MockBean
     private UrlRepository urlRepository;
     @MockBean
-    private ShortCodeRepositoryImpl shortCodeRepository;
+    private ShortCodeRepository shortCodeRepository;
 
     private static Stream<Arguments> validUrlNoExpires() {
         Faker faker = new Faker();
@@ -101,7 +101,7 @@ class ShortenerControllerTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(urlRequest)))
             .andExpect(status().isCreated())
-            .andExpect(header().exists("location"));
+            .andExpect(header().exists("content-location"));
     }
 
     @WithMockUser(username = "flitwick", password = "alohomora")
@@ -112,7 +112,7 @@ class ShortenerControllerTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(urlRequest)))
             .andExpect(status().isCreated())
-            .andExpect(header().exists("location"));
+            .andExpect(header().exists("content-location"));
     }
 
     @WithMockUser(username = "flitwick", password = "alohomora")

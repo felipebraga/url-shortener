@@ -5,7 +5,7 @@ import jakarta.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ShortCodeRepositoryImpl {
+public class ShortCodeRepositoryImpl implements ShortCodeRepository {
 
     private final EntityManager entityManager;
 
