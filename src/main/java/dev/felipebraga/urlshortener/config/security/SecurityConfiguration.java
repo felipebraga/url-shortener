@@ -2,6 +2,8 @@ package dev.felipebraga.urlshortener.config.security;
 
 import dev.felipebraga.urlshortener.model.User;
 import dev.felipebraga.urlshortener.repository.UserRepository;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -14,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.cache.SpringCacheBasedUserCache;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -51,15 +54,18 @@ public class SecurityConfiguration {
 
     @Bean
     @Profile("!test")
-    public CustomUserDetailsService customUserDetailsService(UserRepository userRepository) {
-        return new CustomUserDetailsService(userRepository);
+    public CustomDaoUserDetailsService customUserDetailsService(UserRepository userRepository) {
+        return new CustomDaoUserDetailsService(userRepository);
     }
 
     @Bean
     @Profile("!test")
-    public DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService customUserDetailsService, PasswordEncoder passwordEncoder) {
+    public DaoAuthenticationProvider authenticationProvider(CustomDaoUserDetailsService customDaoUserDetailsService,
+                                                            PasswordEncoder passwordEncoder,
+                                                            CacheManager cacheManager) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(passwordEncoder);
-        provider.setUserDetailsService(customUserDetailsService);
+        provider.setUserDetailsService(customDaoUserDetailsService);
+        provider.setUserCache(new SpringCacheBasedUserCache(cacheManager.getCache("auth-db-user")));
         return provider;
     }
 
