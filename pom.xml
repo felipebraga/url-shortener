@@ -15,7 +15,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <name>url-shortener</name>
-    <description>URL Shortener - Reducto</description>
+    <description>URL Shortener - Reducio</description>
 
     <properties>
         <java.version>21</java.version>
@@ -109,10 +109,17 @@
             <version>${datafaker.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>io.gatling.highcharts</groupId>
             <artifactId>gatling-charts-highcharts</artifactId>
             <version>${gatling-charts.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.pebbletemplates</groupId>
+            <artifactId>pebble</artifactId>
+            <version>3.2.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

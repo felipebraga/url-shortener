@@ -69,7 +69,7 @@ class ShortenerControllerTests {
                 LocalDateTime.now().minusHours(index)), index));
     }
 
-    private static Stream<String> whenPublicInvalidUrlThen400() {
+    private static Stream<String> whenPublicInvalidUrlThen422() {
         return Stream.of(null, " ", "example.", "www.example.com", "http://www.example.com:8080:8081/page");
     }
 
@@ -86,11 +86,11 @@ class ShortenerControllerTests {
 
     @ParameterizedTest
     @MethodSource
-    void whenPublicInvalidUrlThen400(String url) throws Exception {
+    void whenPublicInvalidUrlThen422(String url) throws Exception {
         mockMvc.perform(post("/api/reducio")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new UrlRequest(url, null))))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @WithMockUser(username = "flitwick", password = "alohomora")
@@ -118,10 +118,10 @@ class ShortenerControllerTests {
     @WithMockUser(username = "flitwick", password = "alohomora")
     @ParameterizedTest
     @MethodSource("validUrlWithPastExpires")
-    void whenLoggedValidUrlPastExpiresThenReturn400(UrlRequest urlRequest, Long index) throws Exception {
+    void whenLoggedValidUrlPastExpiresThenReturn422(UrlRequest urlRequest, Long index) throws Exception {
         mockMvc.perform(post("/api/shorten")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(urlRequest)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isUnprocessableEntity());
     }
 }
