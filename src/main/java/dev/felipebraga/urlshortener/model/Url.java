@@ -176,10 +176,8 @@ public class Url implements Persistable<Long>, Serializable {
         private User user;
 
         private Builder(ShortCode shortCode, String sourceUrl) {
-            Objects.requireNonNull(shortCode);
-            Objects.requireNonNull(sourceUrl);
-            this.shortCode = shortCode;
-            this.sourceUrl = sourceUrl;
+            this.shortCode = Objects.requireNonNull(shortCode);
+            this.sourceUrl = Objects.requireNonNull(sourceUrl);
         }
 
         public Builder shortenedUrl(URI shortenedUrl) {

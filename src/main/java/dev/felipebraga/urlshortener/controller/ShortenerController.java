@@ -47,7 +47,7 @@ public class ShortenerController {
     }
 
     @PostMapping(value = "/reducio", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<UrlCreatedResponse> reducio(@RequestBody @Valid UrlRequest urlRequest,
+    public ResponseEntity<UrlCreatedResponse> reducio(@RequestBody @Validated(Validation.class) UrlRequest urlRequest,
                                                       @AuthenticationPrincipal User user,
                                                       UriComponentsBuilder uriBuilder) {
         return executeShorten(urlRequest, user, uriBuilder);

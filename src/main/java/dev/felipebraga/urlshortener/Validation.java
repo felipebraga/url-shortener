@@ -1,4 +1,6 @@
 package dev.felipebraga.urlshortener;
 
-public interface Validation {
+import jakarta.validation.groups.Default;
+
+public interface Validation extends Default {
 }
