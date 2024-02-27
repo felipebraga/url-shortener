@@ -1,4 +1,4 @@
-package dev.felipebraga.urlshortener.model;
+package dev.felipebraga.urlshortener.datatype;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -25,11 +25,14 @@ public final class ShortCode implements Serializable {
         return value;
     }
 
-    public <X extends Throwable> ShortCode isUnknownThenThrows(Supplier<? extends X> exceptionSupplier) throws X {
+    /**
+     * When the shortCode instance has no seq or value,
+     * it is considered an unknown shortCode then it should throw an exception
+     */
+    public <X extends Throwable> void isUnknownThenThrows(Supplier<? extends X> exceptionSupplier) throws X {
        if (seq == null || value == null) {
            throw exceptionSupplier.get();
        }
-       return this;
     }
 
     @Override

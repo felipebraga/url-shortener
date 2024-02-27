@@ -1,6 +1,6 @@
 package dev.felipebraga.urlshortener.controller.request;
 
-import dev.felipebraga.urlshortener.Validation;
+import dev.felipebraga.urlshortener.validation.Validation;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;

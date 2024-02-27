@@ -1,6 +1,5 @@
 package dev.felipebraga.urlshortener.datatype;
 
-import dev.felipebraga.urlshortener.model.ShortCode;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.metamodel.spi.ValueAccess;

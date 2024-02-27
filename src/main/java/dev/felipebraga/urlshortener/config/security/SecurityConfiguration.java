@@ -38,7 +38,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/api/shorten/**", "/api/reducto/**").authenticated()
             )
             .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .httpBasic(Customizer.withDefaults())
             .formLogin(AbstractHttpConfigurer::disable);

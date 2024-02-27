@@ -1,6 +1,6 @@
 package dev.felipebraga.urlshortener.repository;
 
-import dev.felipebraga.urlshortener.model.ShortCode;
+import dev.felipebraga.urlshortener.datatype.ShortCode;
 import dev.felipebraga.urlshortener.model.Url;
 import dev.felipebraga.urlshortener.model.User;
 import org.springframework.data.jpa.repository.Query;

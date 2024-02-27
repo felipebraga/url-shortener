@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-
     record ErrorDetail(String pointer, String detail) {
     }
 

@@ -1,4 +1,4 @@
-package dev.felipebraga.urlshortener;
+package dev.felipebraga.urlshortener.validation;
 
 import jakarta.validation.groups.Default;
 

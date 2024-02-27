@@ -24,7 +24,7 @@ public class User implements Serializable, UserDetails {
     private Long id;
 
     @NaturalId
-    @Column(nullable = false, insertable = false, columnDefinition = "uuid default gen_random_uuid()")
+    @Column(nullable = false, updatable = false, insertable = false, columnDefinition = "uuid default gen_random_uuid()")
     private UUID publicId;
 
     @Column(length = 120, nullable = false)

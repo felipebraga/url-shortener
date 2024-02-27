@@ -1,15 +1,14 @@
 package dev.felipebraga.urlshortener.controller;
 
-import dev.felipebraga.urlshortener.Validation;
 import dev.felipebraga.urlshortener.controller.request.UrlRequest;
 import dev.felipebraga.urlshortener.controller.response.UrlCreatedResponse;
 import dev.felipebraga.urlshortener.controller.response.UrlResponse;
-import dev.felipebraga.urlshortener.model.ShortCode;
+import dev.felipebraga.urlshortener.datatype.ShortCode;
 import dev.felipebraga.urlshortener.model.Url;
 import dev.felipebraga.urlshortener.model.User;
 import dev.felipebraga.urlshortener.repository.UrlRepository;
-import dev.felipebraga.urlshortener.service.ShortCodeService;
-import jakarta.validation.Valid;
+import dev.felipebraga.urlshortener.service.ShortCodeComponent;
+import dev.felipebraga.urlshortener.validation.Validation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpHeaders;
@@ -31,11 +30,11 @@ public class ShortenerController {
 
     private final Log logger = LogFactory.getLog(getClass());
 
-    private final ShortCodeService shortCodeService;
+    private final ShortCodeComponent shortCodeComponent;
     private final UrlRepository urlRepository;
 
-    public ShortenerController(ShortCodeService shortCodeService, UrlRepository urlRepository) {
-        this.shortCodeService = shortCodeService;
+    public ShortenerController(ShortCodeComponent shortCodeComponent, UrlRepository urlRepository) {
+        this.shortCodeComponent = shortCodeComponent;
         this.urlRepository = urlRepository;
     }
 
@@ -56,7 +55,7 @@ public class ShortenerController {
     private ResponseEntity<UrlCreatedResponse> executeShorten(UrlRequest urlRequest,
                                                               User user,
                                                               UriComponentsBuilder uriBuilder) {
-        final ShortCode shortCode = shortCodeService.nextShortCode();
+        final ShortCode shortCode = shortCodeComponent.nextShortCode();
         final URI shortenedUri = uriBuilder.path("{shortCode}").buildAndExpand(shortCode).toUri();
 
         final Url url = Url.builder(shortCode, urlRequest.url())
@@ -72,20 +71,19 @@ public class ShortenerController {
                 .body(UrlCreatedResponse.wrap(url));
     }
 
-    @GetMapping({"/shorten/{uniqueId}", "/reducio/{uniqueId}"})
-    public ResponseEntity<UrlResponse> getShortened(@PathVariable String uniqueId,
+    @GetMapping({"/shorten/{shortCode:\\w{4,12}}", "/reducio/{shortCode:\\w{4,12}}"})
+    public ResponseEntity<UrlResponse> getShortened(@PathVariable ShortCode shortCode,
                                                     @AuthenticationPrincipal User user) {
-        final ShortCode shortCode = shortCodeService.decode(uniqueId);
         final Url url = urlRepository.findByIdAndUser(shortCode.getSeq(), user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return ResponseEntity.ok(UrlResponse.wrap(url));
     }
 
-    @DeleteMapping({"/shorten/{uniqueId}", "/reducto/{uniqueId}"})
-    public ResponseEntity<?> delete(@PathVariable String uniqueId,
+    @DeleteMapping({"/shorten/{shortCode:\\w{4,12}}", "/reducto/{shortCode:\\w{4,12}}"})
+    public ResponseEntity<?> delete(@PathVariable ShortCode shortCode,
                                     @AuthenticationPrincipal User user) {
-        final ShortCode shortCode = shortCodeService.decode(uniqueId);
+
         final Url url = urlRepository.findByIdAndUser(shortCode.getSeq(), user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -95,7 +93,7 @@ public class ShortenerController {
     }
 
     private String getResourceLocation(ShortCode shortCode, User user) {
-        UriComponentsBuilder currentUri = ServletUriComponentsBuilder.fromCurrentRequest();
+        final UriComponentsBuilder currentUri = ServletUriComponentsBuilder.fromCurrentRequest();
         if (user != null && currentUri.toUriString().contains("/reducio")) {
             currentUri.replacePath("/api/shorten");
         }

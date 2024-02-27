@@ -1,11 +1,10 @@
 package dev.felipebraga.urlshortener.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.felipebraga.urlshortener.config.SqidsConfiguration;
 import dev.felipebraga.urlshortener.controller.request.UrlRequest;
 import dev.felipebraga.urlshortener.repository.ShortCodeRepository;
 import dev.felipebraga.urlshortener.repository.UrlRepository;
-import dev.felipebraga.urlshortener.service.ShortCodeService;
+import dev.felipebraga.urlshortener.service.ShortCodeComponent;
 import net.datafaker.Faker;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,11 +14,9 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.sqids.Sqids;
 
 import java.time.LocalDateTime;
 import java.util.stream.LongStream;
@@ -32,18 +29,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(value = ShortenerController.class,
     excludeAutoConfiguration = SecurityAutoConfiguration.class)
-@Import(SqidsConfiguration.class)
 class ShortenerControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper mapper;
-    @Autowired
-    private Sqids sqids;
 
     @SpyBean
-    private ShortCodeService shortCodeService;
+    private ShortCodeComponent shortCodeComponent;
     @MockBean
     private UrlRepository urlRepository;
     @MockBean

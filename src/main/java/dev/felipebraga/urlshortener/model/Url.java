@@ -1,5 +1,6 @@
 package dev.felipebraga.urlshortener.model;
 
+import dev.felipebraga.urlshortener.datatype.ShortCode;
 import dev.felipebraga.urlshortener.datatype.ShortCodeType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
