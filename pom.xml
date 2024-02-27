@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -21,7 +21,7 @@
         <java.version>21</java.version>
         <datafaker.version>2.1.0</datafaker.version>
         <sqids.version>0.1.0</sqids.version>
-        <postgresql.version>42.7.1</postgresql.version>
+        <postgresql.version>42.7.2</postgresql.version>
         <gatling-charts.version>3.10.3</gatling-charts.version>
         <gatling-maven-plugin.version>4.7.0</gatling-maven-plugin.version>
     </properties>
