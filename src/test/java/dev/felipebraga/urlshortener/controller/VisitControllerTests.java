@@ -5,8 +5,8 @@ import dev.felipebraga.urlshortener.datatype.ShortCode;
 import dev.felipebraga.urlshortener.model.Url;
 import dev.felipebraga.urlshortener.repository.ActivityRepository;
 import dev.felipebraga.urlshortener.repository.ShortCodeRepositoryImpl;
-import dev.felipebraga.urlshortener.repository.UrlRepository;
 import dev.felipebraga.urlshortener.service.ShortCodeComponent;
+import dev.felipebraga.urlshortener.service.UrlService;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ class VisitControllerTests {
     @MockBean
     private ShortCodeRepositoryImpl shortCodeRepository;
     @MockBean
-    private UrlRepository urlRepository;
+    private UrlService urlService;
     @MockBean
     private ActivityRepository activityRepo;
 
@@ -57,9 +57,8 @@ class VisitControllerTests {
     void whenVisitingValidShortCodeThenRedirect(String shortCode) throws Exception {
         Url url = Url.builder(new ShortCode(null, shortCode), "http://example.com").build();
 
-        when(urlRepository.findNotExpiredByShortCode(
-                any(ShortCode.class), any(LocalDateTime.class))
-        ).thenReturn(Optional.of(url));
+        when(urlService.findByShortCode(any(ShortCode.class)))
+                .thenReturn(Optional.of(url));
 
         mockMvc.perform(get("/{shortCode}", shortCode)
                 .contentType(MediaType.ALL))
@@ -69,9 +68,7 @@ class VisitControllerTests {
     @ParameterizedTest
     @MethodSource("validShortCode")
     void whenVisitingValidShortCodeAndItDoesntExistsThen404(String shortCode) throws Exception {
-        when(urlRepository.findNotExpiredByShortCode(
-                any(ShortCode.class), any(LocalDateTime.class))
-        ).thenReturn(Optional.empty());
+        when(urlService.findByShortCode(any(ShortCode.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/{shortCode}", shortCode)
                         .contentType(MediaType.ALL))

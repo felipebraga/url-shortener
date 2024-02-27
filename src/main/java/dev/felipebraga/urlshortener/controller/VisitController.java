@@ -5,7 +5,7 @@ import dev.felipebraga.urlshortener.datatype.ShortCode;
 import dev.felipebraga.urlshortener.model.Activity;
 import dev.felipebraga.urlshortener.model.Url;
 import dev.felipebraga.urlshortener.repository.ActivityRepository;
-import dev.felipebraga.urlshortener.repository.UrlRepository;
+import dev.felipebraga.urlshortener.service.UrlService;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,19 +17,18 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 
 @Controller
 public class VisitController {
 
-    private final UrlRepository urlRepo;
+    private final UrlService urlService;
     private final ActivityRepository activityRepo;
     private final UrlShortenerProperties properties;
 
-    public VisitController(UrlRepository urlRepo,
+    public VisitController(UrlService urlService,
                            ActivityRepository activityRepo,
                            UrlShortenerProperties properties) {
-        this.urlRepo = urlRepo;
+        this.urlService = urlService;
         this.activityRepo = activityRepo;
         this.properties = properties;
     }
@@ -40,8 +39,7 @@ public class VisitController {
 
         shortCode.isUnknownThenThrows(() -> notFoundException);
 
-        Url url = urlRepo.findNotExpiredByShortCode(shortCode, LocalDateTime.now())
-                .orElseThrow(() -> notFoundException);
+        Url url = urlService.findByShortCode(shortCode).orElseThrow(() -> notFoundException);
 
         activityRepo.save(new Activity(url, headers.toSingleValueMap()));
 

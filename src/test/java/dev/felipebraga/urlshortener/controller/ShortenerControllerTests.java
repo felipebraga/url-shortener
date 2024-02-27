@@ -3,8 +3,8 @@ package dev.felipebraga.urlshortener.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.felipebraga.urlshortener.controller.request.UrlRequest;
 import dev.felipebraga.urlshortener.repository.ShortCodeRepository;
-import dev.felipebraga.urlshortener.repository.UrlRepository;
 import dev.felipebraga.urlshortener.service.ShortCodeComponent;
+import dev.felipebraga.urlshortener.service.UrlService;
 import net.datafaker.Faker;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -39,7 +39,7 @@ class ShortenerControllerTests {
     @SpyBean
     private ShortCodeComponent shortCodeComponent;
     @MockBean
-    private UrlRepository urlRepository;
+    private UrlService urlService;
     @MockBean
     private ShortCodeRepository shortCodeRepository;
 

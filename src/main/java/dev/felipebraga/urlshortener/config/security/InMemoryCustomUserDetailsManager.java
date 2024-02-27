@@ -1,8 +1,6 @@
 package dev.felipebraga.urlshortener.config.security;
 
 import dev.felipebraga.urlshortener.model.User;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;

@@ -6,8 +6,8 @@ import dev.felipebraga.urlshortener.controller.response.UrlResponse;
 import dev.felipebraga.urlshortener.datatype.ShortCode;
 import dev.felipebraga.urlshortener.model.Url;
 import dev.felipebraga.urlshortener.model.User;
-import dev.felipebraga.urlshortener.repository.UrlRepository;
 import dev.felipebraga.urlshortener.service.ShortCodeComponent;
+import dev.felipebraga.urlshortener.service.UrlService;
 import dev.felipebraga.urlshortener.validation.Validation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,12 +30,12 @@ public class ShortenerController {
 
     private final Log logger = LogFactory.getLog(getClass());
 
+    private final UrlService urlService;
     private final ShortCodeComponent shortCodeComponent;
-    private final UrlRepository urlRepository;
 
-    public ShortenerController(ShortCodeComponent shortCodeComponent, UrlRepository urlRepository) {
+    public ShortenerController(UrlService urlService, ShortCodeComponent shortCodeComponent) {
+        this.urlService = urlService;
         this.shortCodeComponent = shortCodeComponent;
-        this.urlRepository = urlRepository;
     }
 
     @PostMapping(value = "/shorten", consumes = {MediaType.APPLICATION_JSON_VALUE})
@@ -64,7 +64,7 @@ public class ShortenerController {
                 .user(user)
                 .build();
 
-        urlRepository.save(url);
+        urlService.save(url);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.CONTENT_LOCATION, getResourceLocation(shortCode, user))
@@ -74,7 +74,7 @@ public class ShortenerController {
     @GetMapping({"/shorten/{shortCode:\\w{4,12}}", "/reducio/{shortCode:\\w{4,12}}"})
     public ResponseEntity<UrlResponse> getShortened(@PathVariable ShortCode shortCode,
                                                     @AuthenticationPrincipal User user) {
-        final Url url = urlRepository.findByIdAndUser(shortCode.getSeq(), user)
+        final Url url = urlService.findById(shortCode, user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return ResponseEntity.ok(UrlResponse.wrap(url));
@@ -84,10 +84,7 @@ public class ShortenerController {
     public ResponseEntity<?> delete(@PathVariable ShortCode shortCode,
                                     @AuthenticationPrincipal User user) {
 
-        final Url url = urlRepository.findByIdAndUser(shortCode.getSeq(), user)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        urlRepository.save(url.inactivate());
+        urlService.inactivateOrThrow(shortCode, user, () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return ResponseEntity.noContent().build();
     }
